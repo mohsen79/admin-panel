@@ -10,7 +10,7 @@ const NavBar: FC = () => {
     const path = usePathname();
     const links = [
         { label: 'Dashboard', href: '/' },
-        { label: 'Issuses', href: '/issues' },
+        { label: 'Issues', href: '/issues' },
     ];
 
     return (
