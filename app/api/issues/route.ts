@@ -3,9 +3,9 @@ import { z } from 'zod';
 import prisma from "@/prisma/client";
 
 const createIssueSchema = z.object({
-    title: z.string().min(1).max(100),
-    description: z.string().min(1)
-})
+    title: z.string().min(1, 'title is required').max(100),
+    description: z.string().min(1, 'description is requried')
+});
 
 
 export async function POST(request: NextRequest) {

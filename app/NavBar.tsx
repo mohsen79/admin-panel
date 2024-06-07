@@ -17,7 +17,7 @@ const NavBar: FC = () => {
         <nav className="flex space-x-5 px-3 h-10 border-b items-center mb-3">
             <Link href="/"><AiFillBug /></Link>
             <ul className="flex space-x-3 text-zinc-500">
-                {links.map(link => <li><Link
+                {links.map((link, index) => <li key={index}><Link
                     className={classNames({
                         'text-zinc-800': path === link.href,
                         'hover:text-zinc-600': true
