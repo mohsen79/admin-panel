@@ -6,18 +6,24 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createIssueSchema } from '@/app/schemas/validationSchemas';
+import { z } from 'zod';
+import ErrorMessage from '@/app/components/ErrorMessage';
+import Spinner from '@/app/components/Spinner';
 
-interface IssueForm {
-    title: string
-    description: string
-}
+type IssueForm = z.infer<typeof createIssueSchema>;
 
 const NewIssue = () => {
     const [error, setError] = useState('');
-    const { register, control, handleSubmit } = useForm<IssueForm>();
+    const [spinner, setSpinner] = useState(false);
+    const { register, control, handleSubmit, formState: { errors } } = useForm<IssueForm>({
+        resolver: zodResolver(createIssueSchema)
+    });
     const router = useRouter();
 
     const submitForm = async (data: object) => {
+        setSpinner(true);
         const res = await fetch('/api/issues', {
             method: 'POST',
             body: JSON.stringify(data)
@@ -25,8 +31,10 @@ const NewIssue = () => {
 
         if (res.ok) {
             router.push('/issues');
+            setSpinner(false);
         } else {
             setError('an unexpected error');
+            setSpinner(false);
         }
     }
 
@@ -37,12 +45,14 @@ const NewIssue = () => {
             </Callout.Root>}
             <form className='space-y-2' onSubmit={handleSubmit((data) => submitForm(data))}>
                 <TextField.Root placeholder="new issue" {...register('title')} />
+                <ErrorMessage>{errors.title?.message}</ErrorMessage>
                 <Controller
                     name='description'
                     control={control}
                     render={({ field }) => <SimpleMDE placeholder='description' {...field} />}
                 />
-                <Button>Add</Button>
+                <ErrorMessage>{errors.description?.message}</ErrorMessage>
+                <Button>Add{spinner && <Spinner />}</Button>
             </form>
         </div>
     )
