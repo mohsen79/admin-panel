@@ -1,15 +1,10 @@
-import prisma from '@/prisma/client';
-import { Button, Table } from '@radix-ui/themes';
-import Link from 'next/link';
 import React from 'react';
+import { Skeleton, Table } from '@radix-ui/themes';
 import IssueStatusBadge from '../components/IssueStatusBadge';
-import delay from 'delay';
 import IssuesAction from './IssuesAction';
 
-const Issues = async () => {
-    const issues = await prisma.issue.findMany();
-    await delay(2000);
-
+const Loading = () => {
+    const issues = [1, 2, 3, 4];
     return (
         <div className='mx-5 space-y-3'>
             <IssuesAction />
@@ -28,21 +23,23 @@ const Issues = async () => {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {issues.map(issue => (
-                        <Table.Row key={issue.id}>
+                    {issues.map(() => (
+                        <Table.Row>
                             <Table.Cell>
-                                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
-                                <span className='block md:hidden'><IssueStatusBadge status={issue.status} /></span>
+                                <Skeleton />
+                                <span className='block md:hidden'><Skeleton />
+                                </span>
                             </Table.Cell>
-                            <Table.Cell className='hidden md:table-cell'><IssueStatusBadge status={issue.status} /></Table.Cell>
-                            <Table.Cell className='hidden md:table-cell'>{issue.createdAt.toDateString()}</Table.Cell>
+                            <Table.Cell className='hidden md:table-cell'><Skeleton />
+                            </Table.Cell>
+                            <Table.Cell className='hidden md:table-cell'><Skeleton />
+                            </Table.Cell>
                         </Table.Row>
                     ))}
                 </Table.Body>
             </Table.Root>
         </div>
-
     )
 }
 
-export default Issues;
+export default Loading
