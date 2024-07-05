@@ -15,6 +15,7 @@ const IssueDetial = async ({ params }: Props) => {
     if (!issue) notFound();
 
     return (
+<<<<<<< HEAD
         <div className='mx-5'>
             <Heading>{issue.title}</Heading>
             <Flex className='space-x-3' my="3">
@@ -24,8 +25,15 @@ const IssueDetial = async ({ params }: Props) => {
             <Card className='prose'>
                 <Markdown>{issue.description}</Markdown>
             </Card>
-        </div>
-    )
+=======
+        <div>
+                <p>{issue.title}</p>
+                <p>{issue.description}</p>
+                <p>{issue.status}</p>
+                <p>{issue.createdAt.toDateString()}</p>
+>>>>>>> 51eaa30f3f0d32e015a740efe67681354b3a9bc8
+            </div>
+            )
 }
 
-export default IssueDetial
+            export default IssueDetial
