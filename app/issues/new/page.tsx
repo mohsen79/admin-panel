@@ -2,15 +2,18 @@
 
 import React, { useState } from 'react';
 import { Button, Callout, TextField } from '@radix-ui/themes';
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createIssueSchema } from '@/app/schemas/validationSchemas';
 import { z } from 'zod';
-import ErrorMessage from '@/app/components/ErrorMessage';
-import Spinner from '@/app/components/Spinner';
+import { ErrorMessage, Spinner } from '@/app/components';
+import dynamic from 'next/dynamic';
+
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
+    ssr: false
+});
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
@@ -21,6 +24,7 @@ const NewIssue = () => {
         resolver: zodResolver(createIssueSchema)
     });
     const router = useRouter();
+
 
     const submitForm = async (data: object) => {
         setSpinner(true);
