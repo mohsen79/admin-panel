@@ -6,7 +6,7 @@ import "easymde/dist/easymde.min.css";
 import { useForm, Controller } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createIssueSchema } from '@/app/schemas/validationSchemas';
+import { IssueSchema } from '@/app/schemas/validationSchemas';
 import { z } from 'zod';
 import { ErrorMessage, Spinner } from '@/app/components';
 import dynamic from 'next/dynamic';
@@ -16,28 +16,33 @@ const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
     ssr: false
 });
 
-type IssueForm = z.infer<typeof createIssueSchema>;
+type IssueForm = z.infer<typeof IssueSchema>;
 
 const IssueForm = ({ issue }: { issue?: Issue }) => {
     const [error, setError] = useState('');
     const [spinner, setSpinner] = useState(false);
     const { register, control, handleSubmit, formState: { errors } } = useForm<IssueForm>({
-        resolver: zodResolver(createIssueSchema)
+        resolver: zodResolver(IssueSchema)
     });
     const router = useRouter();
 
 
     const submitForm = async (data: object) => {
-        setSpinner(true);
-        const res = await fetch('/api/issues', {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
+        try {
+            setSpinner(true);
+            if (issue)
+                await fetch('/api/issues/' + issue.id, {
+                    method: 'PATCH',
+                    body: JSON.stringify(data)
+                });
+            else
+                await fetch('/api/issues', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
 
-        if (res.ok) {
             router.push('/issues');
-            setSpinner(false);
-        } else {
+        } catch {
             setError('an unexpected error');
             setSpinner(false);
         }
@@ -58,7 +63,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
                     render={({ field }) => <SimpleMDE placeholder='description' {...field} />}
                 />
                 <ErrorMessage>{errors.description?.message}</ErrorMessage>
-                <Button>Add{spinner && <Spinner />}</Button>
+                <Button>{issue ? 'Update' : 'Add'}{spinner && <Spinner />}</Button>
             </form>
         </div>
     )
