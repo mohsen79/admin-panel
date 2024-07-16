@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import Markdown from 'react-markdown'
 import { Pencil2Icon } from '@radix-ui/react-icons';
+import DeleteIssueButton from './DeleteIssueButton'
 
 interface Props {
     params: { id: string }
@@ -17,8 +18,8 @@ const IssueDetial = async ({ params }: Props) => {
     if (!issue) notFound();
 
     return (
-        <Grid className='mx-5' columns={{ initial: '1', md: '2' }} gap="3">
-            <Box>
+        <Grid className='mx-5' columns={{ initial: '1', sm: '5' }} gap="3">
+            <Box className='md:col-span-4'>
                 <Heading>{issue.title}</Heading>
                 <Flex className='space-x-3' my="3">
                     <IssueStatusBadge status={issue.status} />
@@ -29,12 +30,15 @@ const IssueDetial = async ({ params }: Props) => {
                 </Card>
             </Box>
             <Box>
-                <Button>
-                    <Pencil2Icon />
-                    <Link href={`/issues/${issue.id}/edit`}>
-                        Edit Issue
-                    </Link>
-                </Button>
+                <Flex direction='column' gap='3'>
+                    <Button>
+                        <Pencil2Icon />
+                        <Link href={`/issues/${issue.id}/edit`}>
+                            Edit Issue
+                        </Link>
+                    </Button>
+                    <DeleteIssueButton />
+                </Flex>
             </Box>
         </Grid>
     )

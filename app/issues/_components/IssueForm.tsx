@@ -9,12 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IssueSchema } from '@/app/schemas/validationSchemas';
 import { z } from 'zod';
 import { ErrorMessage, Spinner } from '@/app/components';
-import dynamic from 'next/dynamic';
 import { Issue } from '@prisma/client';
-
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
-    ssr: false
-});
+import SimpleMDE from 'react-simplemde-editor';
 
 type IssueForm = z.infer<typeof IssueSchema>;
 
@@ -42,6 +38,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
                 });
 
             router.push('/issues');
+            router.refresh();
         } catch {
             setError('an unexpected error');
             setSpinner(false);
