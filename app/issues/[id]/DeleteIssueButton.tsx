@@ -4,14 +4,17 @@ import { AlertDialog, Button, Flex } from '@radix-ui/themes'
 import { TrashIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 import { Fragment, useState } from 'react';
+import { Spinner } from '@/app/components';
 
 
 const DeleteIssueButton = ({ id }: { id: number }) => {
     const [error, setError] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
     const deleteIssue = async () => {
         try {
+            setIsDeleting(true);
             await fetch('/api/issues/' + id, {
                 method: 'DELETE',
             });
@@ -19,6 +22,7 @@ const DeleteIssueButton = ({ id }: { id: number }) => {
             router.push('/issues');
             router.refresh();
         } catch {
+            setIsDeleting(false);
             setError(true);
         }
     }
@@ -26,8 +30,8 @@ const DeleteIssueButton = ({ id }: { id: number }) => {
     return <Fragment>
         <AlertDialog.Root>
             <AlertDialog.Trigger>
-                <Button color='red'>
-                    <TrashIcon />
+                <Button disabled={isDeleting} color='red'>
+                    {isDeleting ? <Spinner /> : <TrashIcon />}
                     delete Issuse
                 </Button>
             </AlertDialog.Trigger>
