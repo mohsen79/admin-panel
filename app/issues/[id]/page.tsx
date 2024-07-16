@@ -37,7 +37,7 @@ const IssueDetial = async ({ params }: Props) => {
                             Edit Issue
                         </Link>
                     </Button>
-                    <DeleteIssueButton />
+                    <DeleteIssueButton id={issue.id} />
                 </Flex>
             </Box>
         </Grid>
