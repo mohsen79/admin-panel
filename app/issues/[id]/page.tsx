@@ -7,12 +7,16 @@ import React from 'react'
 import Markdown from 'react-markdown'
 import { Pencil2Icon } from '@radix-ui/react-icons';
 import DeleteIssueButton from './DeleteIssueButton'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/auth/authOptions'
+import AssigneeSelect from './AssigneeSelect'
 
 interface Props {
     params: { id: string }
 }
 
 const IssueDetial = async ({ params }: Props) => {
+    const session = await getServerSession(authOptions);
     const issue = await prisma.issue.findUnique({ where: { id: parseInt(params.id) } })
 
     if (!issue) notFound();
@@ -30,7 +34,8 @@ const IssueDetial = async ({ params }: Props) => {
                 </Card>
             </Box>
             <Box>
-                <Flex direction='column' gap='3'>
+                {session && <Flex direction='column' gap='3'>
+                    <AssigneeSelect />
                     <Button>
                         <Pencil2Icon />
                         <Link href={`/issues/${issue.id}/edit`}>
@@ -38,7 +43,7 @@ const IssueDetial = async ({ params }: Props) => {
                         </Link>
                     </Button>
                     <DeleteIssueButton id={issue.id} />
-                </Flex>
+                </Flex>}
             </Box>
         </Grid>
     )
