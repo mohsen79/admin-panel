@@ -35,7 +35,7 @@ const IssueDetial = async ({ params }: Props) => {
             </Box>
             <Box>
                 {session && <Flex direction='column' gap='3'>
-                    <AssigneeSelect />
+                    <AssigneeSelect issue={issue} />
                     <Button>
                         <Pencil2Icon />
                         <Link href={`/issues/${issue.id}/edit`}>
