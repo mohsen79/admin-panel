@@ -3,10 +3,11 @@
 import { Issue, User } from '@prisma/client';
 import { Select, Skeleton } from '@radix-ui/themes';
 import { useQuery } from '@tanstack/react-query';
+import toast, { Toaster } from 'react-hot-toast';
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
     const fetchUser = async () => {
-        const response = await fetch('/api/users');
+        const response = await fetch('/api/users')
         return await response.json();
     }
 
@@ -15,19 +16,23 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
         queryFn: fetchUser,
         staleTime: 30000,
         retry: 3
-    })
+    });
+
+    const assigneeChange = async (userId: string) => {
+        const data = { assignedToUserId: userId || null };
+        const result = await fetch('/xapi/issues/' + issue.id, {
+            method: 'PATCH', body: JSON.stringify(data)
+        });
+
+        !result.ok && toast.error('could not save the changes');
+    }
 
     if (error) return null;
 
     if (isLoading) return <Skeleton height='1.7rem' />
 
-    return <Select.Root defaultValue={issue.assignedToUserId || null}
-        onValueChange={(userId) => {
-            const data = { assignedToUserId: userId || null };
-            fetch('/api/issues/' + issue.id, {
-                method: 'PATCH', body: JSON.stringify(data)
-            });
-        }}>
+    return <> <Select.Root defaultValue={issue.assignedToUserId || null}
+        onValueChange={assigneeChange}>
         <Select.Trigger placeholder='Assign...' />
         <Select.Content>
             <Select.Group>
@@ -38,6 +43,8 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
             </Select.Group>
         </Select.Content>
     </Select.Root>
+        <Toaster />
+    </>
 }
 
 export default AssigneeSelect
