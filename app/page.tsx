@@ -1,5 +1,5 @@
-import Image from 'next/image'
+import Pagination from './components/Pagination'
 
-export default function Home() {
-  return <h2>hello world</h2>
+export default function Home({ searchParams }: { searchParams: { page: string } }) {
+  return <Pagination currentPage={parseInt(searchParams.page) || 1} itemCount={100} pageSize={10} />
 }
