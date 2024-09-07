@@ -24,7 +24,7 @@ const LatestIssues = async () => {
                                     <IssueStatusBadge status={issue.status} />
                                 </Flex>
                                 {issue.assignedToUser &&
-                                    <Avatar radius='full' src={issue.assignedToUser.image} fallback='?' />}
+                                    <Avatar radius='full' src={issue.assignedToUser.image!} fallback='?' />}
                             </Flex>
                         </Table.Cell>
                     </Table.Row>)}
