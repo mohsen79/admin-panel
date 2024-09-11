@@ -3,7 +3,7 @@ import prisma from '@/prisma/client'
 import { Box, Button, Card, Flex, Grid, Heading } from '@radix-ui/themes'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import React from 'react'
+import React, { cache } from 'react'
 import Markdown from 'react-markdown'
 import { Pencil2Icon } from '@radix-ui/react-icons';
 import DeleteIssueButton from './DeleteIssueButton'
@@ -15,9 +15,11 @@ interface Props {
     params: { id: string }
 }
 
+const fetchUser = cache((issueId: number) => prisma.issue.findUnique({ where: { id: issueId } }));
+
 const IssueDetial = async ({ params }: Props) => {
     const session = await getServerSession(authOptions);
-    const issue = await prisma.issue.findUnique({ where: { id: parseInt(params.id) } })
+    const issue = await fetchUser(parseInt(params.id));
 
     if (!issue) notFound();
 
@@ -47,6 +49,14 @@ const IssueDetial = async ({ params }: Props) => {
             </Box>
         </Grid>
     )
+}
+
+export async function generateMetadata({ params }: Props) {
+    const issue = await fetchUser(parseInt(params.id));
+    return {
+        title: issue?.title,
+        description: 'details of issue' + issue?.id
+    }
 }
 
 export default IssueDetial
